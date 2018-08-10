@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+   <link rel="stylesheet"  type="text/css"  href="{{url_for('static', filename='style.css')}}" >
+   <title> HomePage of Categories </title>
+ </head>
+ <body>
+  <header>
+    <nav>
+       <div class="acceuil">
+          <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+       </div>
+       {% if 'email' in user %}
+         <div class="user">
+            <img class="avatar" src="{{user['img_user']}}" alt="">
+            <div>
+              <p>{{user['email']}}</p>
+              <a href="{{url_for('gdisconnect')}}">
+                <button class="btn_logout">logout</button>
+              </a>
+            </div>
+         </div>
+       {% else %}
+         <div id="login">
+           <a href="{{url_for('showLogin')}}">
+              <button class="btn_login">login</button>
+           </a>
+         </div>
+       {% endif %}
+     </nav>
+  </header>
+
+  <main class="box-shadow">
+    <div class="categories">
+      <h1>Categories</h1>
+        <ul>
+          {%for cat in categories %}
+          <li>
+            <a href="{{url_for('itemsByCategory', cat_id=cat.id)}}">{{ cat.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+    </div>
+    <div class="items">
+      <h1>Latest Item</h1>
+      <ul>
+            {%for i in items %}
+            {%for cat in categories %}
+            {% if i.category_id ==  cat.id %}
+            <li>
+              <a href="{{url_for('getItem', cat_id=i.category_id, item_id=i.id)}}" >
+              {{ i.name }} <span style="color:#AAA"> ( {{ cat.name }} )</span>
+              </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            </ul>
+      </div>
+  </main>
+
+
+ </body>
+</html>

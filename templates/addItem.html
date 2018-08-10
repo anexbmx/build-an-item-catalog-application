@@ -1,0 +1,46 @@
+<html>
+ <head>
+   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+   <link rel="stylesheet"  type="text/css"  href="{{url_for('static', filename='style.css')}}" >
+   <title> Add an Item to {{ cat.name }} </title>
+ </head>
+ <body>
+    <header>
+      <nav>
+         <div class="acceuil">
+            <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+         </div>
+         {% if 'email' in user %}
+           <div class="user">
+              <img class="avatar" src="{{user['img_user']}}" alt="">
+              <div>
+                <p>{{user['email']}}</p>
+                <a href="{{url_for('gdisconnect')}}">
+                  <button class="btn_logout">logout</button>
+                </a>
+              </div>
+           </div>
+         {% else %}
+           <div id="login">
+             <a href="{{url_for('showLogin')}}">
+                <button class="btn_login">login</button>
+             </a>
+           </div>
+         {% endif %}
+       </nav>
+    </header>
+
+     <main class="box-shadow d-block text-center">
+          <h1>{{ cat.name }}</h1><br>
+          <form action="{{ url_for('addItemCat', cat_id=cat.id) }}" method="POST">
+  	         <input class="input d-block" placeholder="name" type="text" name="name"/>
+  	         <textarea class="input d-block" name="description" placeholder="description"></textarea>
+  	         <input type="submit" value="Add" class="btn_add">
+              <a style="text-decoration: none;"
+                  href="{{ url_for('itemsByCategory',cat_id=cat.id) }}">
+              <buttom class="btn_login">Cancel</buttom>
+              </a>
+  	       </form>
+     </main>
+ </body>
+</html>

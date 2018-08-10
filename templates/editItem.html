@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+   <link rel="stylesheet"  type="text/css"  href="{{url_for('static', filename='style.css')}}" >
+   <title> Edite an Item to {{ item.name }} </title>
+ </head>
+ <body>
+   <header>
+     <nav>
+        <div class="acceuil">
+           <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+        </div>
+        {% if 'email' in user %}
+          <div class="user">
+             <img class="avatar" src="{{user['img_user']}}" alt="">
+             <div>
+               <p>{{user['email']}}</p>
+               <a href="{{url_for('gdisconnect')}}">
+                 <button class="btn_logout">logout</button>
+               </a>
+             </div>
+          </div>
+        {% else %}
+          <div id="login">
+            <a href="{{url_for('showLogin')}}">
+               <button class="btn_login">login</button>
+            </a>
+          </div>
+        {% endif %}
+      </nav>
+   </header>
+     <main class="box-shadow text-center d-block">
+        <h1 >{{ item.name }}</h1>
+        <form action="{{url_for('editItem',cat_id=item.category_id, item_id=item.id)}}" method="POST">
+	        <input class="input d-block" type="text" name="name"  value="{{item.name}}"/>
+	        <textarea class="input d-block" name="description" >{{item.description}}</textarea>
+          <select class="input d-block" name="Catalog">
+          {%for cat in categories %}
+            {% if cat.id == item.category_id %}
+              <option value="{{cat.id}}" selected>{{cat.name}}</option>
+            {% else %}
+              <option value="{{cat.id}}" >{{cat.name}}</option>
+            {% endif %}
+
+          }
+          {% endfor %}
+          </select>
+          <input type="hidden" name="ID" value="{{item.id}}"/>
+	        <input type="submit" value="Edite" class="btn_add">
+          <a href="{{ url_for('getItem',cat_id=item.category_id,item_id=item.id) }}">
+              <buttom class="btn_login">Cancel</buttom>
+            </a>
+	       </form>
+     </main>
+ </body>
+</html>

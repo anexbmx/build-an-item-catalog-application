@@ -1,0 +1,57 @@
+<html>
+ <head>
+   <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+   <link rel="stylesheet"  type="text/css"  href="{{url_for('static', filename='style.css')}}" >
+   <title> {{ item.name }}</title>
+ </head>
+ <body>
+   <header>
+     <nav>
+        <div class="acceuil">
+           <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+        </div>
+        {% if 'email' in user %}
+          <div class="user">
+             <img class="avatar" src="{{user['img_user']}}" alt="">
+             <div>
+               <p>{{user['email']}}</p>
+               <a href="{{url_for('gdisconnect')}}">
+                 <button class="btn_logout">logout</button>
+               </a>
+             </div>
+          </div>
+        {% else %}
+          <div id="login">
+            <a href="{{url_for('showLogin')}}">
+               <button class="btn_login">login</button>
+            </a>
+          </div>
+        {% endif %}
+      </nav>
+   </header>
+
+     <main class="box-shadow d-block">
+       <h1>{{item.name}}</h1>
+         <p>{{item.description}}</p><br/><br/>
+       {% if 'email' in user %}
+          {% if item.user_id != user.user_id %}
+              <span>- user who entered this item is allowed to remove or edit this item</span><br>
+          {% endif %}
+            <a href="{{ url_for('editItem', cat_id=item.category_id,item_id=item.id)}}">
+              {% if item.user_id == user.user_id %}
+                  <button class="btn_add">Edite</button>
+              {% else %}
+                  <button class="btn_add " disabled>Edite</button>
+              {% endif %}
+            </a>
+            <a href="{{ url_for('deleteItem',cat_id=item.category_id,item_id=item.id) }}">
+               {% if item.user_id == user.user_id %}
+                  <button class="btn_delete" >Delete</button>
+              {% else %}
+                  <button class="btn_delete " disabled >Delete</button>
+              {% endif %}
+            </a>
+        {% endif %}
+     </main>
+ </body>
+</html>

@@ -1,0 +1,220 @@
+body {
+  padding: 0;
+  margin: 0;
+  background: #fafafa;
+}
+
+button:disabled {
+  opacity: 0.65;
+   cursor: no-drop;
+}
+
+
+/*
+* Header
+*/
+
+a {
+  text-decoration:none;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background:#060606;
+  color: white;
+  margin-bottom: 25px;
+  height: 60px;
+  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+  padding: 0 50px;
+}
+
+nav .acceuil {
+  flex-grow: 1;
+}
+
+nav .acceuil a {
+  color:white;
+  font-size: 40px;
+  font-weight:bold;
+  width: 200px;
+}
+
+.box-shadow {
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.btn_login {
+  color: #212529;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+
+.btn_login:hover {
+  color: #212529;
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
+}
+
+
+/*
+* main
+*/
+
+main {
+  background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 800px;
+  justify-content: space-between;
+  margin: auto;
+  padding: 10px 30px;
+  position: relative;
+  text-align: left;
+}
+
+main .categories {
+  margin-right: 50px;
+}
+
+main .categories:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 80%;
+  top: calc(100% - 90%);
+  left: 210px;
+  background-color: #ddd;
+}
+
+main ul {
+  list-style: none;
+  padding: 0;
+  font-size: 18px;
+
+}
+
+main ul li {
+  margin-bottom: 5px;
+}
+
+main ul li a {
+  color: #FF5722;
+  transition: 0.3s all ease-in-out;
+}
+
+main ul li a:hover {
+  font-size: 20px;
+}
+
+
+/*
+*   categorie.html
+*/
+
+.user {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.user p {
+  margin: 0
+}
+
+.user div {
+  margin-left: 10px;
+}
+
+.btn_logout,
+.btn_add,
+.btn_delete,
+.btn_login {
+  display: inline-block;
+  font-weight: bold;
+  border: 1px solid transparent;
+  line-height: 1.5;
+  border-radius: .25rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btn_logout {
+ color: #212529;
+ background-color: #ffc107;
+ border-color: #ffc107;
+ font-weight: bold;
+}
+
+.btn_logout:hover {
+  color: #212529;
+  background-color: #e0a800;
+  border-color: #d39e00;
+}
+
+.btn_logout:active,
+.btn_add:active,
+.btn_delete:active
+.btn_login:active {
+  opacity: 0.67;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  padding: 2px;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+
+/*
+* Demo Framwork
+*/
+
+
+.d-block {
+  display: block;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.input {
+  border-radius: 5px;
+  margin: auto;
+  margin-bottom: 15px;
+  padding: 10px;
+  width: 300px;
+}
+
+.btn_add {
+  padding: 5px 8px;
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  cursor: pointer;
+}
+
+.btn_add:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+.btn_delete {
+  padding: 5px 8px;
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  cursor: pointer;
+}
+
+.btn_delete:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
