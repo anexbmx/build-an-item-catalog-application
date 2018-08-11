@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
  <head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
    <link rel="stylesheet"  type="text/css"  href="{{url_for('static', filename='style.css')}}" >
    <title> HomePage of Categories </title>
  </head>
  <body>
   <header>
-    <nav>
-       <div class="acceuil">
-          <a  href="{{url_for('allCategories')}}" > Catalog App </a>
-       </div>
-       {% if 'email' in user %}
-         <div class="user">
-            <img class="avatar" src="{{user['img_user']}}" alt="">
-            <div>
-              <p>{{user['email']}}</p>
-              <a href="{{url_for('gdisconnect')}}">
-                <button class="btn_logout">logout</button>
-              </a>
+      <nav>
+         <div class="acceuil">
+            <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+         </div>
+         {% if 'email' in user %}
+           <div class="user">
+              <img class="avatar" src="{{user['img_user']}}" alt="">
+              <div>
+                <p>{{user['email']}}</p>
+                <a href="{{url_for('gdisconnect')}}">
+                  <button class="btn_logout">logout</button>
+                </a>
+              </div>
+           </div>
+         {% else %}
+           <div id="signinButton">
+              <span class="g-signin"
+               data-scope="openid email"
+               data-clientid="64570410578-hk12rb07bcacsbbjnk1d3b5laf9kj32i.apps.googleusercontent.com"
+               data-redirecturi="postmessage"
+               data-accesstype="offline"
+               data-cookiepolicy="single_host_origin"
+               data-callback="signInCallback"
+               data-approvalprompt="force">
+              </span>
             </div>
-         </div>
-       {% else %}
-         <div id="login">
-           <a href="{{url_for('showLogin')}}">
-              <button class="btn_login">login</button>
-           </a>
-         </div>
-       {% endif %}
-     </nav>
-  </header>
-
+         {% endif %}
+       </nav>
+    </header>
   <main class="box-shadow">
     <div class="categories">
       <h1>Categories</h1>
@@ -60,6 +66,27 @@
       </div>
   </main>
 
+    <script>
+      function signInCallback(authResult) {
+        if (authResult['code']) {
+          $('#signinButton').attr('style', 'display: none');
+          $.ajax({
+            type: 'POST',
+            url: '/gconnect?state={{STATE}}',
+            processData: false,
+            data: authResult['code'],
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+            if (result) {
+              $('#result').html('<div class="content">Login Successful!</br>'+result + '</br> Redirecting...</div>')
 
+              window.location.href = "/catalog/";
+            }
+            else if (authResult['error']) {
+              console.log('There was an error: ' + authResult['error']);}}
+          });
+        }
+      }
+    </script>
  </body>
 </html>

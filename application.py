@@ -51,7 +51,7 @@ session = DBSession()
 
 
 # add new user
-def adduser(login_session):
+def add_user(login_session):
     user = User(
         userName=login_session['userName'],
         email=login_session['email'],
@@ -62,76 +62,79 @@ def adduser(login_session):
 
 
 # check if user in database or add it
-def getUserBySession(login_session):
+def get_user_by_session(login_session):
     try:
         user = session.query(User).filter_by(
          email=login_session['email']).one()
         return user
     except:
-        adduser(login_session)
+        add_user(login_session)
         return session.query(
             User).filter_by(email=login_session['email']).one()
 
 
 # get one Category By ID
-def getCategoryByID(cat_id):
+def get_category_by_id(cat_id):
         return session.query(Category).filter_by(id=cat_id).one()
 
 
 # get All category
-def getAllCategory():
+def get_all_category():
         return session.query(Category).all()
 
 
 # get one item by id
-def GetOneItemByID(i_id):
+def get_one_item_by_id(i_id):
         return session.query(Item).filter_by(id=i_id).join(Category).one()
 
 
 # get items by Category
-def GetItemsByCat(cat_id):
+def get_items_by_cat(cat_id):
     return session.query(Item).filter_by(category_id=cat_id).all()
 
 
 # get last 10 items
-def getLastItems():
+def get_lasts_items():
     return session.query(Item).order_by(
             Item.id.desc()).limit(10)
 
 
 # add new row in database or updat
-def addRow(item):
+def add_item(item):
     session.add(item)
     session.commit()
     return
 
 
 # delete row from database
-def deleteRow(item):
+def delete_item(item):
     session.delete(item)
     session.commit()
     return
 
 
-# Routes (JSON API)
+# --------------------------------------------------------------
+# -------------------------API Routes---------------------------
+# --------------------------------------------------------------
+
 # get all categories Api JSON
-@app.route('/catalog/JSON/')
+@app.route('/api/catalog/JSON/')
 def catalogJSON():
-    categories = getAllCategory()
+    categories = get_all_category()
     return jsonify(categories=[cat.serialize for cat in categories])
 
 
 # get Items by category Api JSON
-@app.route('/catalog/<int:category_id>/items/JSON/')
+@app.route('/api/catalog/<int:category_id>/items/JSON/')
 def itemsJSON(category_id):
-    items = GetItemsByCat(category_id)
+    items = get_items_by_cat(category_id)
     return jsonify(items=[item.serialize for item in items])
 
 
 # get one Item by Category APi JSON
-@app.route('/catalog/items/<int:item_id>/JSON/')
+@app.route('/api/catalog/items/<int:item_id>/JSON/')
 def itemJSON(item_id):
-    item = GetOneItemByID(item_id)
+    item = get_one_item_by_id(item_id)
     return jsonify(item=item.serialize)
 
 
@@ -195,7 +198,7 @@ def gconnect():
     login_session['email'] = data['email']
 
     # check if user in database or add it
-    login_session['user_id'] = getUserBySession(login_session).id
+    login_session['user_id'] = get_user_by_session(login_session).id
     show_output = ''
     show_output += '<br/>'
     show_output += '<h2>Welcome 😃 '
@@ -213,20 +216,14 @@ def gconnect():
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
-        print('Access Token is None')
         response = make_response(
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s', access_token)
-    print('User name is: ')
-    print(login_session['userName'])
     url = ('https://accounts.google.com/o/oauth2/revoke?token=%s'
            % login_session['access_token'])
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print('result is ')
-    print(result)
     # check status code
     if result['status'] == '200':
         del login_session['access_token']
@@ -236,28 +233,13 @@ def gdisconnect():
         del login_session['img_user']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return redirect('/login')
+        return redirect('/')
     else:
         response = make_response(
             json.dumps('Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
 
-
-@app.route('/login')
-def showLogin():
-    '''
-    displays all current categories
-    with the latest added items
-    '''
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in range(32))
-    login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
-    return render_template('index.html',
-                           STATE=state,
-                           categories=getAllCategory(),
-                           items=getLastItems())
 
 
 @app.route('/')
@@ -267,17 +249,19 @@ def allCategories():
     show all categories  all the items available
     for that category
     '''
-    # Check if user logged in
-    if 'userName' not in login_session:
-        return redirect(url_for('showLogin'))
-    else:
-        # Call helper methods
-        categories = getAllCategory()
-        latestItems = getLastItems()
-        return render_template('categories.html',
-                               categories=categories,
-                               items=latestItems,
-                               user=login_session)
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in range(32))
+    login_session['state'] = state
+    # Call helper methods
+    categories = get_all_category()
+    latestItems = get_lasts_items()
+    return render_template('index.html',
+            STATE=state,
+            categories=categories,
+            items=latestItems,
+            user=login_session)
+
+
 
 
 @app.route('/catalog/<int:cat_id>/')
@@ -287,9 +271,9 @@ def itemsByCategory(cat_id):
     for that category.
     '''
     # Call helper methods
-    categories = getAllCategory()
-    category = getCategoryByID(cat_id)
-    items = GetItemsByCat(cat_id)
+    categories = get_all_category()
+    category = get_category_by_id(cat_id)
+    items = get_items_by_cat(cat_id)
     return render_template('category.html',
                            category=category,
                            categories=categories,
@@ -302,8 +286,8 @@ def getItem(cat_id, item_id):
     '''
     display information about selected item
     '''
-    cat = getCategoryByID(cat_id)
-    i = GetOneItemByID(item_id)
+    cat = get_category_by_id(cat_id)
+    i = get_one_item_by_id(item_id)
     return render_template('item.html',
                            category=cat,
                            item=i,
@@ -323,14 +307,14 @@ def addItemCat(cat_id):
         return redirect(url_for('allCategories'))
     else:
         # call helper method to get Category
-        cat = getCategoryByID(cat_id)
+        cat = get_category_by_id(cat_id)
         if request.method == 'POST':
             # create new item
             new_item = Item(name=request.form['name'],
                             description=request.form['description'],
                             category_id=cat.id,
                             user_id=login_session['user_id'])
-            addRow(new_item)
+            add_item(new_item)
             return redirect(url_for('itemsByCategory', cat_id=cat.id))
 
         else:
@@ -339,7 +323,7 @@ def addItemCat(cat_id):
                                    user=login_session)
 
 
-@app.route('/catalog/<int:cat_id>/edit/<int:item_id>/',
+@app.route('/catalog/<int:cat_id>/items/<int:item_id>/edit',
            methods=['GET', 'POST'])
 def editItem(cat_id, item_id):
     '''
@@ -352,8 +336,8 @@ def editItem(cat_id, item_id):
     if 'userName' not in login_session:
         return redirect(url_for('allCategories'))
     else:
-        categories = getAllCategory()
-        item = GetOneItemByID(item_id)
+        categories = get_all_category()
+        item = get_one_item_by_id(item_id)
         if request.method == 'POST':
             # user who entered this item is allowed to edit  this item
             if login_session['user_id'] != item.user_id:
@@ -366,7 +350,7 @@ def editItem(cat_id, item_id):
             if request.form['Catalog']:
                 item.category_id = request.form['Catalog']
             # update that item
-            addRow(item)
+            add_item(item)
             return redirect(url_for('getItem',
                             cat_id=item.category_id,
                             item_id=item.id))
@@ -387,15 +371,15 @@ def deleteItem(cat_id, item_id):
         return make_response("""You are not
         authorized to delete this item.""", 401)
     else:
-        categories = getAllCategory()
-        item = GetOneItemByID(item_id)
+        categories = get_all_category()
+        item = get_one_item_by_id(item_id)
         # user who entered this item is allowed to remove  this item
         if login_session["user_id"] != item.user_id:
                 return make_response("""You are not
                  authorized to delete this item.""", 401)
         if request.method == 'POST':
             # delete item
-            deleteRow(item)
+            delete_item(item)
             return redirect(url_for('allCategories'))
         else:
             return render_template('deleteItem.html',

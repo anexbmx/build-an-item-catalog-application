@@ -8,23 +8,36 @@
  </head>
  <body>
   <header>
-    <nav>
-       <div class="acceuil">
-          <a href="{{url_for('allCategories')}}" > Catalog App </a>
-       </div>
-       <div id="signinButton">
-          <span class="g-signin"
-           data-scope="openid email"
-           data-clientid="64570410578-hk12rb07bcacsbbjnk1d3b5laf9kj32i.apps.googleusercontent.com"
-           data-redirecturi="postmessage"
-           data-accesstype="offline"
-           data-cookiepolicy="single_host_origin"
-           data-callback="signInCallback"
-           data-approvalprompt="force">
-          </span>
-        </div>
-     </nav>
+      <nav>
+         <div class="acceuil">
+            <a  href="{{url_for('allCategories')}}" > Catalog App </a>
+         </div>
+         {% if 'email' in user %}
+           <div class="user">
+              <img class="avatar" src="{{user['img_user']}}" alt="">
+              <div>
+                <p>{{user['email']}}</p>
+                <a href="{{url_for('gdisconnect')}}">
+                  <button class="btn_logout">logout</button>
+                </a>
+              </div>
+           </div>
+         {% else %}
+           <div id="signinButton">
+              <span class="g-signin"
+               data-scope="openid email"
+               data-clientid="64570410578-hk12rb07bcacsbbjnk1d3b5laf9kj32i.apps.googleusercontent.com"
+               data-redirecturi="postmessage"
+               data-accesstype="offline"
+               data-cookiepolicy="single_host_origin"
+               data-callback="signInCallback"
+               data-approvalprompt="force">
+              </span>
+            </div>
+         {% endif %}
+       </nav>
     </header>
+
 
     <main class="box-shadow">
       <div class="categories">
